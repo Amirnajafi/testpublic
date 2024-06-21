@@ -45,7 +45,9 @@ FROM base
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y openssl && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
-    
+ 
+ARG YARN_VERSION=1.22.19
+RUN npm install -g yarn@$YARN_VERSION --force
 RUN yarn playwright install
 
 # Copy built application
