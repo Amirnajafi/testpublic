@@ -1,29 +1,20 @@
 # Base image
 FROM node:18-alpine
 
-
-# Create app directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# Copy package.json and package-lock.json to the container
 COPY package*.json ./
 
-# Set production environment
-ENV NODE_ENV="production"
-
-# Install app dependencies
-RUN yarn install
-
+# Install project dependencies
+RUN npm install
 RUN npx playwright install
-
-# Bundle app source
+# Copy the rest of the application source code to the container
 COPY . .
 
-# Creates a "dist" folder with the production build
-RUN yarn build
-
-# Expose the port on which the app will run
+# Expose the port your Nest.js application is listening on
 EXPOSE 3000
 
-# Start the server using the production build
-CMD ["yarn", "start:prod"]
+# Command to start your Nest.js application
+CMD [ "npm", "run", "start:prod" ]
