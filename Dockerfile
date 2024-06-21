@@ -25,6 +25,7 @@ RUN apt-get update -qq && \
 # Install node modules
 COPY --link package.json yarn.lock ./
 RUN yarn install --frozen-lockfile --production=false
+RUN npx playwright install
 
 
 # Generate Prisma Client
@@ -46,10 +47,7 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y openssl && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
  
-ARG YARN_VERSION=1.22.19
-RUN npm install -g yarn@$YARN_VERSION --force
-RUN yarn playwright install
-
+RUN npx playwright install
 # Copy built application
 COPY --from=build /app /app
 
