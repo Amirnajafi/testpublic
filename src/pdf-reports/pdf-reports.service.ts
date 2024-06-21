@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-// import { chromium } from 'playwright-core';
-const playwright = require('playwright-aws-lambda');
+import { chromium } from 'playwright-core';
 
 @Injectable()
 export class PdfGeneratorService {
@@ -10,13 +9,12 @@ export class PdfGeneratorService {
     if (!url) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
-    const browser = await playwright.launchChromium({});
 
     // Launch a headless browser using Playwright
-    // const browser = await chromium.launch({
-    //   headless: true,
-    //   timeout: 500000,
-    // });
+    const browser = await chromium.launch({
+      headless: true,
+      timeout: 500000,
+    });
     const page = await browser.newPage();
 
     try {
