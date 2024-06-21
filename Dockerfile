@@ -10,7 +10,7 @@ COPY package*.json ./
 # Install project dependencies
 RUN npm install
 RUN npx playwright install --with-deps
-
+RUN npx prisma generate
 # Copy the rest of the application source code to the container
 COPY . .
 RUN npm run build
