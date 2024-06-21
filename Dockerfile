@@ -1,5 +1,5 @@
 # Base image
-FROM node:18-alpine
+FROM node
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -12,7 +12,7 @@ RUN npm install
 RUN npx playwright install
 # Copy the rest of the application source code to the container
 COPY . .
-
+RUN npm run build
 # Expose the port your Nest.js application is listening on
 EXPOSE 3000
 
