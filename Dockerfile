@@ -9,7 +9,8 @@ COPY package*.json ./
 
 # Install project dependencies
 RUN npm install
-RUN npx playwright install
+RUN npx playwright install --with-deps
+
 # Copy the rest of the application source code to the container
 COPY . .
 RUN npm run build
