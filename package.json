@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "npx playwright install && nest build",
+    "build": "npx playwright install && yarn playwright install && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -41,6 +41,7 @@
     "ws": "^8.17.1"
   },
   "devDependencies": {
+    "playwright": "^1.44.1",
     "@flydotio/dockerfile": "^0.5.7",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
