@@ -1,13 +1,11 @@
-# syntax = docker/dockerfile:1
+# Base image
+FROM node:18
 
-# Adjust NODE_VERSION as desired
-ARG NODE_VERSION=18.18.2
-FROM node:${NODE_VERSION}-slim as base
+# Create app directory
+WORKDIR /usr/src/app
 
-LABEL fly_launch_runtime="NestJS/Prisma"
-
-# NestJS/Prisma app lives here
-WORKDIR /app
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+COPY package*.json ./
 
 # Set production environment
 ENV NODE_ENV="production"
@@ -15,41 +13,22 @@ ARG YARN_VERSION=1.22.19
 RUN npm install -g yarn@$YARN_VERSION --force
 
 
-# Throw-away build stage to reduce size of final image
-FROM base as build
+# Install app dependencies
+RUN yarn install
 
-# Install packages needed to build node modules
-RUN apt-get update -qq && \
-  apt-get install --no-install-recommends -y build-essential node-gyp openssl pkg-config python-is-python3
+RUN yarn playwright install
 
-# Install node modules
-COPY --link package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --production=false
+# Bundle app source
+COPY . .
 
-RUN npx playwright install
+# Copy the .env and .env.development files
+COPY .env .env.development ./
 
-# Generate Prisma Client
-COPY --link prisma .
-RUN npx prisma generate
+# Creates a "dist" folder with the production build
+RUN yarn build
 
-# Copy application code
-COPY --link . .
-
-# Build application
-RUN yarn run build
-
-
-# Final stage for app image
-FROM base
-
-# Install packages needed for deployment
-RUN apt-get update -qq && \
-  apt-get install --no-install-recommends -y openssl && \
-  rm -rf /var/lib/apt/lists /var/cache/apt/archives
-
-# Copy built application
-COPY --from=build /app /app
-
-# Start the server by default, this can be overwritten at runtime
+# Expose the port on which the app will run
 EXPOSE 3000
-CMD [ "yarn", "run", "start" ]
+
+# Start the server using the production build
+CMD ["npm", "run", "start:prod"]
